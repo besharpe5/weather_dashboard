@@ -5,7 +5,7 @@ body{
 }
 
 header {
-    background: linear-gradient(#b3cde0, #03396c);
+    background: linear-gradient(#03396c, #b3cde0);
     color: white;
 }
 
@@ -17,4 +17,42 @@ header h1 {
 
 .city-search {
     filter: drop-shadow(1px 2px 2px #03396c);
+}
+
+.card {
+    padding: 5px;
+    font-family: 'Merriweather Sans', sans-serif;
+}
+
+#recent-searches {
+    margin-top: 10px;
+    border-top: #03396c solid;
+}
+
+/* background color changes based on low, moderate, or high UV index */
+.uv-index-low {
+    background-color: green;
+    color: white;
+    font-family: 'Merriweather Sans', sans-serif;
+    padding: 3px 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+}
+
+.uv-index-moderate {
+    background-color: yellow;
+    color: white;
+    font-family: 'Merriweather Sans', sans-serif;
+    padding: 3px 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+}
+
+.uv-index-high {
+    background-color: red;
+    color: white;
+    font-family: 'Merriweather Sans', sans-serif;
+    padding: 3px 10px;
+    margin-left: 10px;
+    border-radius: 4px;
 }
