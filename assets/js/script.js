@@ -56,7 +56,7 @@ var submitHandler = function(event) {
 
     // this will push city name into cities array. it will also save to the user's local storage
     if (cityName) {
-        getCityWeather(cityName);
+        getWeatherInfo(cityName);
         cities.push(cityName);
         window.localStorage.setItem("cities", JSON.stringify(cities));
         cityInputEl.value = "";
@@ -109,20 +109,87 @@ var showWeather = function(info, city) {
     card.append(currentCity, currentTemperature, currentWindMph, currentHumidity, currentUvIndex);
     currentWeather.appendChild(card);
     currentWeatherEl.appendChild(currentWeather);
-    
-    
 
-}
+    checkUvIndex(currentUvIndexEl, UvIndex);
+};
 
+// this will check for a low, moderate, or high uv index level
+var checkUvIndex = function(currentUvIndexEl, UvIndex) {
+    if (UvIndex < 3) {
+        $(currentUvIndexEl).removeClass("uv-index-moderate uv-index-high");
+        $(currentUvIndexEl).addClass("uv-index-low");
+    }
+    else if (UvIndex >= 3 && UvIndex < 8) {
+        UvIndex.removeClass("uv-index-low uv-index-high");
+        UvIndex.addClass("uv-index-moderate");
+    }
+    else if (UvIndex >= 8) {
+        UvIndex.removeClass("uv-index-moderate uv-index-low");
+        UvIndex.addClass("uv-index-high");
+    }
+};
 
+// this will show the 5 day forecast for the selected city
+var showForecastResults = function(info) {
+    var forecastResultsEl = document.createElement("div");
+    var forecastResultsTitle = document.createElement("h5");
+    var forecastResultsCardEl = document.createElement("div");
+    forecastResultsTitle.textContent = "5-Day Forecast:";
+    forecastResultsTitle.setAttribute("class", "mt-3");
+    forecastResultsCardEl.classList = "card-deck";
+    forecastResultsEl.appendChild(forecastResultsTitle);
+    currentWeatherEl.appendChild(forecastResultsEl);
+    currentWeatherEl.appendChild(forecastResultsCardEl);
 
+    // for loop for daily forecasts
+    for (var i= 1; i < 6; i++) {
+        var currentDate = moment(info.daily[i].dt *1000).format("M/DD/YYYY");
 
+        var day = document.createElement("div");
+        var dayBody = document.createElement("div");
+        var dayDate = document.createElement("h5");
+        var dayImage = info.daily[i].weather[0].icon;
+        var dayImageEl = document.createElement("span");
+        var dayTemperature = document.createElement("p");
+        var dayWindMph = document.createElement("p");
+        var dayHumidity = document.createElement("p");
 
+        day.classList = "card text-white bg-info mb-3";
+        dayBody.classList = "card-body";
+        dayDate.classList = "card-title"
+        dayDate.textContent = currentDate;
+        dayImageEl.innerHTML = "<img src='https://openweathermap.org/img/wn/" + dayImage + ".png'>"
+        dayTemperature.classList = "card-text";
+        dayTemperature.textContent = "Temperature: " + info.daily[i].temp.day + "°F";
+        dayWindMph.classList = "card-text";
+        dayWindMph.textContent = "Wind Speed: " + info.daily[i].wind_speed + " MPH";
+        dayHumidity.classList = "card-text";
+        dayHumidity.textContent = "Humidity: " + info.daily[i].humidity + "%";
 
+        dayDate.appendChild(dayImageEl);
+        dayBody.append(dayDate, dayTemperature, dayWindMph, dayHumidity);
+        day.appendChild(dayBody);
+        forecastResultsCardEl.appendChild(day);
+    }
+};
 
+// this will load recently searched cities
+var loadRecentCities = function() {
+    var showRecentCities = JSON.parse(window.localStorage.getItem("cities")) || [];
 
-
-
-
+    // this will create buttons for the recently viewed cities
+    for (var i = 0; i < showRecentCities.length; i++) {
+        var recentCitiesButton = document.createElement("button");
+        recentCitiesButton.classList = "btn btn-secondary btn-block mt-2";
+        recentCitiesButton.innerText = showRecentCities[i];
+        const cityText = showRecentCities[i];
+        recentSearchHistoryEl.appendChild(recentCitiesButton);
+        recentCitiesButton.addEventListener("click", function() {
+            getWeatherInfo(cityText);
+        });
+    }
+};
 
 searchEl.addEventListener("submit", submitHandler);
+
+loadRecentCities();
